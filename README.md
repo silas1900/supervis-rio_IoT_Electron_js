@@ -240,7 +240,7 @@ Além de servir como aplicação prática de **ESP32, MQTT e Electron.js**, o pr
 
 ## 👨‍💻 Autor
 
-**Silas Almeida**
+**Silas Almeida Santos**
 
 Projeto desenvolvido para estudo e aplicação prática de tecnologias relacionadas a:
 
