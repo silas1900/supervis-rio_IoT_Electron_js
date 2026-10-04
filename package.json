@@ -1,0 +1,33 @@
+{
+  "name": "supervisorio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^44.4.3",
+    "electron-builder": "^26.15.3"
+  },
+  "dependencies": {
+    "electron-store": "^11.0.2",
+    "mqtt": "^5.16.0"
+  },
+  "build": {
+    "appId": "com.supervisorio.app",
+    "productName": "Supervisório",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "portable",
+      "icon": "capa.ico"
+    }
+  }
+}

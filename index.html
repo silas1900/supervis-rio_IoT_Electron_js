@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Supervisório MQTT</title>
+
+    <link rel="icon" type="image/png" href="icone.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+
+    <header class="topbar">
+
+        <div class="logo">
+            SUPERVISÓRIO
+        </div>
+
+        <div class="topbar-right">
+
+            <!-- STATUS DO MQTT -->
+            <div class="connection">
+                <span class="status-dot"></span>
+                <span id="connection-status">DESCONECTADO</span>
+            </div>
+
+            <!-- STATUS DO ESP32 -->
+            <div class="connection">
+                <span class="status-dot esp32-status-dot"></span>
+                <span id="esp32-status">ESP32 OFFLINE</span>
+            </div>
+
+            <button id="btn-config">
+                ⚙ Configuração
+            </button>
+
+        </div>
+
+</header>
+
+
+    <!-- DASHBOARD -->
+
+    <main class="dashboard" id="dashboard">
+
+        <!-- CARDS -->
+
+        <section class="cards">
+
+            <div class="card">
+
+                <div class="card-title">
+                    TEMPERATURA
+                </div>
+
+                <div class="card-value">
+                    <span id="temperature">0.00</span>
+                    <small>°C</small>
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    TENSÃO
+                </div>
+
+                <div class="card-value">
+                    <span id="voltage">0.00</span>
+                    <small>V</small>
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    CORRENTE
+                </div>
+
+                <div class="card-value">
+                    <span id="current">0.00</span>
+                    <small>A</small>
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    POTÊNCIA
+                </div>
+
+                <div class="card-value">
+                    <span id="power">0.00</span>
+                    <small>W</small>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- GRÁFICO -->
+
+        <section class="panel">
+
+            <div class="panel-header">
+
+                <h2>Temperatura</h2>
+
+                <span id="chart-status">
+                    Monitoramento
+                </span>
+
+            </div>
+
+            <div class="chart-container">
+
+                <canvas id="temperatureChart"></canvas>
+
+            </div>
+
+        </section>
+
+
+        <!-- CARGAS -->
+
+        <section class="panel">
+
+            <div class="panel-header">
+
+                <h2>Controle de Cargas</h2>
+
+            </div>
+
+
+            <div class="loads">
+
+                <div class="load">
+
+                    <div>
+                        <strong>RELÉ 1</strong>
+
+                        <span id="relay1-status">
+                            DESLIGADO
+                        </span>
+                    </div>
+
+                    <button onclick="toggleLoad('relay1')" class="off">
+                        LIGAR
+                    </button>
+
+                </div>
+
+
+                <div class="load">
+
+                    <div>
+                        <strong>RELÉ 2</strong>
+
+                        <span id="relay2-status">
+                            DESLIGADO
+                        </span>
+                    </div>
+
+                    <button onclick="toggleLoad('relay2')" class="off">
+                        LIGAR
+                    </button>
+
+                </div>
+
+
+                <div class="load">
+
+                    <div>
+                        <strong>MOTOR</strong>
+
+                        <span id="motor-status">
+                            DESLIGADO
+                        </span>
+                    </div>
+
+                    <button onclick="toggleLoad('motor')" class="off">
+                        LIGAR
+                    </button>
+
+                </div>
+
+
+                <div class="load">
+
+                    <div>
+                        <strong>VENTILADOR</strong>
+
+                        <span id="fan-status">
+                            DESLIGADO
+                        </span>
+                    </div>
+
+                    <button onclick="toggleLoad('fan')" class="off">
+                        LIGAR
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- CONFIGURAÇÃO MQTT -->
+
+    <div id="config-modal" class="modal hidden">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h2>Configuração MQTT</h2>
+
+                <button id="btn-close-config" class="close-button">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="mqtt-host">
+                    Host do Broker
+                </label>
+
+                <input
+                    type="text"
+                    id="mqtt-host"
+                    placeholder="broker.hivemq.cloud"
+                >
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="mqtt-port">
+                        Porta
+                    </label>
+
+                    <input
+                        type="number"
+                        id="mqtt-port"
+                        value="8883"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="mqtt-protocol">
+                        Protocolo
+                    </label>
+
+                    <select id="mqtt-protocol">
+
+                        <option value="mqtts">
+                            MQTT sobre TLS
+                        </option>
+
+                        <option value="mqtt">
+                            MQTT
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="mqtt-username">
+                    Usuário
+                </label>
+
+                <input
+                    type="text"
+                    id="mqtt-username"
+                    placeholder="Usuário MQTT"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="mqtt-password">
+                    Senha
+                </label>
+
+                <input
+                    type="password"
+                    id="mqtt-password"
+                    placeholder="Senha MQTT"
+                >
+
+            </div>
+
+
+            <div class="form-group checkbox-group">
+
+                <label>
+
+                    <input
+                        type="checkbox"
+                        id="mqtt-tls"
+                        checked
+                    >
+
+                    Utilizar TLS/SSL
+
+                </label>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Certificado CA
+                </label>
+
+                <div class="certificate-row">
+
+                    <input
+                        type="text"
+                        id="mqtt-certificate"
+                        placeholder="Nenhum certificado selecionado"
+                        readonly
+                    >
+
+                    <button id="btn-certificate">
+                        Selecionar
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div id="config-message" class="config-message"></div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    id="btn-clear-config"
+                    class="secondary-button"
+                >
+                    Limpar
+                </button>
+
+
+                <div>
+
+                    <button
+                        id="btn-test-mqtt"
+                        class="secondary-button"
+                    >
+                        Testar conexão
+                    </button>
+
+                    <button
+                        id="btn-save-config"
+                        class="primary-button"
+                    >
+                        Salvar configuração
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>
